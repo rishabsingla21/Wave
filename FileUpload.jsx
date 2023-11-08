@@ -98,6 +98,7 @@ const FileUpload = ({ handleFilter, value, handleExport, destination }) => {
           fileID: Math.random().toString(36).substr(2, 9), // Generate a random fileID
           fileName: file.name,
           progress: 0,
+          stage: "in-progress",
           records: {
             success: [],
             failed: []
@@ -242,18 +243,9 @@ const FileUpload = ({ handleFilter, value, handleExport, destination }) => {
                 </Typography>
               </Stack>
 
-              <ul>
-                {files.map(file => (
-                  <li key={file.fileID}>
-                    <strong>{file.fileName}</strong> - {file.progress}%
-                  </li>
-                ))}
-              </ul>
-
-              {/*
-              {uploadingCsvList.map((csv, idx) => (
+              {files.map(file => (
                 <Stack
-                  key={idx}
+                  key={file.fileID}
                   direction='row'
                   justifyContent='space-between'
                   alignItems='center'
@@ -271,16 +263,17 @@ const FileUpload = ({ handleFilter, value, handleExport, destination }) => {
                         whiteSpace: 'nowrap'
                       }}
                     >
-                      {csv.name}
+                      {file.fileName}
                     </div>
                   </div>
-                  {csv.progress > 0 ? (
+
+                  {file.progress > 0 ? (
                     <>
-                      {csv.error ? (
+                      {file.stage == "failed" ? (
                         <CloseIcon style={{ color: '#ea4335' }} />
                       ) : (
                         <Box sx={{ position: 'relative', display: 'inline-flex' }}>
-                          {csv.progress === 100 && !csv.error ? 
+                          {file.progress === 100 && !file.stage == "failed" ? 
                             <IconButton aria-label='Cross' disabled>
                               <DoneIcon style={{ color: '#34a853' }} />
                             </IconButton>
@@ -288,8 +281,8 @@ const FileUpload = ({ handleFilter, value, handleExport, destination }) => {
                             <>                         
                               <CircularProgress
                                 variant='determinate'
-                                value={csv.progress}
-                                style={{ color: csv.progress === 100 ? (!csv.error ? '#34a853' : '#ea4335') : 'inherit' }}
+                                value={file.progress}
+                                style={{ color: file.progress === 100 ? (!csv.error ? '#34a853' : '#ea4335') : 'inherit' }}
                               />
                               <Box
                                 sx={{
@@ -309,7 +302,7 @@ const FileUpload = ({ handleFilter, value, handleExport, destination }) => {
                                   color='text.secondary'
                                   sx={{ fontSize: 10, fontWeight: 'bold' }}
                                 >
-                                  {`${Math.round(csv.progress)}%`}
+                                  {`${Math.round(file.progress)}%`}
                                 </Typography>
                               </Box>
                             </>
@@ -317,16 +310,16 @@ const FileUpload = ({ handleFilter, value, handleExport, destination }) => {
                         </Box>
                       )}
                     </>
-                  ) : csv.error ? (
+                  ) : file.stage == "failed" ? (
                     <>
                       <IconButton aria-label='Cross' disabled>
                         <CloseIcon style={{ color: '#ea4335' }} />
                       </IconButton>
                     </>
                   ) : null}
+
                 </Stack>
               ))}
-                  */}
             </>
           )}
         </ContentWrapper>
